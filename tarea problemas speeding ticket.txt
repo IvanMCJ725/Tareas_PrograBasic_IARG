@@ -1,0 +1,99 @@
+def solve_speeding():
+    #num de segmentos
+    num_carretera, num_bessie = map(int, input().split())
+    
+   
+    carretera = []
+    for i in range(num_carretera):
+        millas, limite = map(int, input().split())
+        carretera.append((millas, limite))
+    
+    # info de bessie
+    viaje_bessie = []
+    for i in range(num_bessie):
+        millas, velocidad = map(int, input().split())
+        viaje_bessie.append((millas, velocidad))
+    
+    
+    pedazo_carretera = 0
+    pedazo_bessie = 0
+    millas_en_carretera = 0
+    millas_en_bessie = 0
+    
+    peor_exceso = 0
+    
+    # Revisar toda la carretera
+    while pedazo_carretera < num_carretera and pedazo_bessie < num_bessie:
+        # Info del pedazo actual de carretera
+        total_millas_carretera, limite_velocidad = carretera[pedazo_carretera]
+        # Info del pedazo actual de Bessie
+        total_millas_bessie, velocidad_bessie = viaje_bessie[pedazo_bessie]
+        
+        # Ver cuanto nos falta de cada pedazo
+        falta_carretera = total_millas_carretera - millas_en_carretera
+        falta_bessie = total_millas_bessie - millas_en_bessie
+        
+        # Avanzar lo que menos nos falta
+        avanzar = min(falta_carretera, falta_bessie)
+        
+        # Ver si bessie se paso del limite
+        if velocidad_bessie > limite_velocidad:
+            exceso = velocidad_bessie - limite_velocidad
+            if exceso > peor_exceso:
+                peor_exceso = exceso
+        
+        # Avanzar en los dos lados
+        millas_en_carretera += avanzar
+        millas_en_bessie += avanzar
+        
+        # Si terminamos el pedazo de carretera, pasar al siguiente
+        if millas_en_carretera == total_millas_carretera:
+            pedazo_carretera += 1
+            millas_en_carretera = 0
+        
+        # Si terminamos el pedazo de Bessie, pasar al siguiente
+        if millas_en_bessie == total_millas_bessie:
+            pedazo_bessie += 1
+            millas_en_bessie = 0
+    
+    print(peor_exceso)
+
+# Ejemplo 
+def test_example():
+    # Simular entrada del ejemplo
+    import io
+    import sys
+    
+    example_input = """3 3
+40 75
+50 35
+10 45
+40 76
+20 30
+40 40"""
+    
+    # Guardar entrada original
+    original_stdin = sys.stdin
+    sys.stdin = io.StringIO(example_input)
+    
+    # Ejecutar solución
+    solve_speeding()
+    
+    # Restaurar entrada original
+    sys.stdin = original_stdin
+
+# Ejecutar ejemplo
+print("Resultado del ejemplo:")
+test_example()
+
+print("Explicación paso a paso:")
+print("Carretera: 40 millas a 75 mph + 50 millas a 35 mph + 10 millas a 45 mph")
+print("Bessie:    40 millas a 76 mph + 20 millas a 30 mph + 40 millas a 40 mph")
+print()
+print("Sucede:")
+print("- Primeras 40 millas: Bessie va a 76 mph, limite es 75 mph → Se pasa por 1 mph")
+print("- Siguientes 20 millas: Bessie va a 30 mph, limite es 35 mph → No se pasa")
+print("- Siguientes 30 millas: Bessie va a 40 mph, limite es 35 mph → Se pasa por 5 mph") 
+print("- Ultimas 10 millas: Bessie va a 40 mph, limite es 45 mph → No se pasa")
+print()
+print("El peor exceso fue: 5 mph")

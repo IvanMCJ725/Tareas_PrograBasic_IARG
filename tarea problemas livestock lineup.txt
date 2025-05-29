@@ -1,0 +1,168 @@
+def resolver_orden_vacas():
+    # Todas las vacas que hay, ya ordenadas alfabéticamente
+    lista_de_vacas = ['Beatrice', 'Bella', 'Belinda', 'Bessie', 'Betsy', 'Blue', 'Buttercup', 'Sue']
+    
+    # Leer cuántas reglas tenemos
+    cuantas_reglas = int(input())
+    
+    # Aquí vamos a guardar las reglas (qué vacas tienen que estar juntas)
+    reglas = []
+    
+    # Leer cada regla
+    for i in range(cuantas_reglas):
+        oracion = input().strip()
+        # La oración es como "Buttercup must be milked beside Bella"
+        # Separamos las palabras y sacamos los nombres
+        palabras = oracion.split()
+        primera_vaca = palabras[0]  # Primera palabra es la primera vaca
+        segunda_vaca = palabras[5]  # La sexta palabra es la segunda vaca
+        reglas.append((primera_vaca, segunda_vaca))
+    
+    # Función para ver si un orden de vacas cumple todas las reglas
+    def cumple_las_reglas(orden_de_vacas):
+        # Revisar cada regla una por una
+        for vaca_a, vaca_b in reglas:
+            # Buscar en qué posición está cada vaca
+            donde_esta_a = orden_de_vacas.index(vaca_a)
+            donde_esta_b = orden_de_vacas.index(vaca_b)
+            
+            # Ver si están una al lado de la otra
+            distancia = abs(donde_esta_a - donde_esta_b)
+            if distancia != 1:  # Si no están juntas, no sirve este orden
+                return False
+        return True  # Si todas las reglas se cumplen, está bien
+    
+    # Función que prueba todos los órdenes posibles (recursiva)
+    def probar_ordenes(orden_hasta_ahora, vacas_que_faltan):
+        # Si ya pusimos todas las vacas
+        if len(vacas_que_faltan) == 0:
+            # Verificar si este orden cumple todas las reglas
+            if cumple_las_reglas(orden_hasta_ahora):
+                return orden_hasta_ahora[:]  # Devolver este orden (funciona!)
+            else:
+                return None  # Este orden no sirve
+        
+        # Probar con cada vaca que nos falta (en orden alfabético)
+        for vaca in sorted(vacas_que_faltan):
+            # Poner esta vaca en el siguiente lugar
+            orden_hasta_ahora.append(vaca)
+            
+            # Hacer una lista nueva sin esta vaca
+            vacas_restantes = vacas_que_faltan[:]
+            vacas_restantes.remove(vaca)
+            
+            # Seguir probando con las vacas que quedan
+            resultado = probar_ordenes(orden_hasta_ahora, vacas_restantes)
+            
+            # Si encontramos un orden que funciona, lo devolvemos
+            if resultado is not None:
+                return resultado
+            
+            # Si no funcionó, quitamos esta vaca e intentamos con otra
+            orden_hasta_ahora.pop()
+        
+        # Si ninguna vaca funcionó aquí, no hay solución
+        return None
+    
+    # Empezar a buscar desde cero
+    orden_final = probar_ordenes([], lista_de_vacas[:])
+    
+    # Mostrar el resultado
+    if orden_final:
+        for vaca in orden_final:
+            print(vaca)
+    else:
+        print("No se pudo encontrar un orden que funcione")
+
+# Función para probar con el ejemplo
+def probar_ejemplo():
+    import io
+    import sys
+    
+    ejemplo_input = """3
+Buttercup must be milked beside Bella
+Blue must be milked beside Bella
+Sue must be milked beside Beatrice"""
+    
+    # Cambiar la entrada temporalmente
+    entrada_original = sys.stdin
+    sys.stdin = io.StringIO(ejemplo_input)
+    
+    print("Probando con el ejemplo:")
+    print("Restricciones:")
+    print("- Buttercup debe estar junto a Bella")
+    print("- Blue debe estar junto a Bella") 
+    print("- Sue debe estar junto a Beatrice")
+    print()
+    print("Resultado:")
+    resolver_orden_vacas()
+    
+    # Restaurar entrada
+    sys.stdin = entrada_original
+
+# Explicar cómo funciona todo esto
+def explicar_paso_a_paso():
+    print("\n" + "="*50)
+    print("¿CÓMO FUNCIONA ESTO?")
+    print("="*50)
+    print()
+    print("🐄 EL PROBLEMA:")
+    print("   - Tenemos 8 vacas que hay que ordeñar en cierto orden")
+    print("   - Algunas vacas TIENEN que estar una al lado de la otra")
+    print("   - Queremos el orden que sea primero alfabéticamente")
+    print()
+    print("💡 LA IDEA:")
+    print("   - Probamos TODOS los órdenes posibles")
+    print("   - Los probamos en orden alfabético (por eso sale el primero)")
+    print("   - Para cada orden completo, verificamos si cumple las reglas")
+    print("   - El primero que encuentre que funcione, ese es la respuesta")
+    print()
+    print("🔄 CÓMO PROBAMOS (RECURSIÓN):")
+    print("   1. Empezamos con una lista vacía")
+    print("   2. Elegimos la primera vaca (alfabéticamente)")
+    print("   3. La ponemos en la lista")
+    print("   4. Repetimos el proceso con las vacas que quedan")
+    print("   5. Si al final no funciona, regresamos y probamos otra vaca")
+    print()
+    print("✅ CÓMO VERIFICAMOS LAS REGLAS:")
+    print("   Para cada regla como 'Bella debe estar junto a Blue':")
+    print("   - Buscamos dónde está Bella en nuestro orden")
+    print("   - Buscamos dónde está Blue en nuestro orden") 
+    print("   - Si la diferencia de posiciones es 1, están juntas ✓")
+    print("   - Si no, este orden no sirve ✗")
+    print()
+    print("🎯 EJEMPLO:")
+    print("   Reglas: Buttercup-Bella, Blue-Bella, Sue-Beatrice")
+    print("   Probamos: Beatrice, Bella, Belinda... ✗")
+    print("   Probamos: Beatrice, Sue, Belinda... ✓ (Sue está junto a Beatrice)")
+    print("   Seguimos hasta completar todo el orden")
+
+# Función más simple para probar
+def probar_con_ejemplo():
+    import io
+    import sys
+    
+    ejemplo = """3
+Buttercup must be milked beside Bella
+Blue must be milked beside Bella
+Sue must be milked beside Beatrice"""
+    
+    # Cambiar donde lee el programa
+    entrada_vieja = sys.stdin
+    sys.stdin = io.StringIO(ejemplo)
+    
+    print("🧪 PROBANDO EL EJEMPLO:")
+    print("Reglas que tenemos:")
+    print("• Buttercup tiene que estar junto a Bella")
+    print("• Blue tiene que estar junto a Bella") 
+    print("• Sue tiene que estar junto a Beatrice")
+    print()
+    print("El orden que encontramos es:")
+    resolver_orden_vacas()
+    
+    # Volver a como estaba
+    sys.stdin = entrada_vieja
+
+# Ejecutar todo
+probar_con_ejemplo()
+explicar_paso_a_paso()

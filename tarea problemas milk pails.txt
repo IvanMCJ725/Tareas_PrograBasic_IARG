@@ -1,0 +1,110 @@
+def resolver_cubetas():
+    # Leer cuanto cabe en cada cubeta
+    cubeta_chiquita, cubeta_mediana, cubeta_grande = map(int, input().split())
+    
+    mejor_resultado = 0
+    
+    # Vamos a probar todas las formas posibles de llenar la cubeta grande
+    # Empezamos viendo cuantas veces usamos la cubeta mediana
+    cuantas_medianas = 0
+    
+    # Mientras podamos meter cubetas medianas sin que se derrame
+    while cuantas_medianas * cubeta_mediana <= cubeta_grande:
+        # Calculamos cuanta leche tenemos solo con las cubetas medianas
+        leche_de_medianas = cuantas_medianas * cubeta_mediana
+        
+        # Vemos cuanto lugar nos sobra
+        lugar_que_sobra = cubeta_grande - leche_de_medianas
+        
+        # Calculamos cuantas cubetas chiquitas caben en lo que sobra
+        cuantas_chiquitas = lugar_que_sobra // cubeta_chiquita
+        
+        # Sumamos toda la leche que juntamos
+        leche_total = leche_de_medianas + (cuantas_chiquitas * cubeta_chiquita)
+        
+        # Si esta combinacion es mejor que la anterior, la guardamos
+        if leche_total > mejor_resultado:
+            mejor_resultado = leche_total
+        
+        # Probamos con una cubeta mediana mas
+        cuantas_medianas += 1
+    
+    print(mejor_resultado)
+
+# Probar con el ejemplo
+def probar_ejemplo():
+    import io
+    import sys
+    
+    ejemplo = "17 25 77"
+    
+    # Cambiar la entrada temporalmente
+    entrada_original = sys.stdin
+    sys.stdin = io.StringIO(ejemplo)
+    
+    print("Probando el ejemplo:")
+    print("Cubetas: 17, 25, 77")
+    resolver_cubetas()
+    
+    # Restaurar entrada
+    sys.stdin = entrada_original
+
+# Explicar paso a paso como funciona
+def explicar_como_funciona():
+    print("\n¿Cómo funciona la solución?")
+    print("=================================")
+    
+    cubeta_chiquita = 17
+    cubeta_mediana = 25  
+    cubeta_grande = 77
+    
+    print(f"Tenemos cubetas de {cubeta_chiquita}, {cubeta_mediana} y {cubeta_grande}")
+    print("Queremos llenar la cubeta grande lo más posible")
+    print()
+    
+    print("Vamos probando todas las formas:")
+    
+    cuantas_medianas = 0
+    mejor_opcion = (0, 0, 0)  # (medianas, chiquitas, total)
+    
+    while cuantas_medianas * cubeta_mediana <= cubeta_grande:
+        leche_de_medianas = cuantas_medianas * cubeta_mediana
+        lugar_que_sobra = cubeta_grande - leche_de_medianas
+        cuantas_chiquitas = lugar_que_sobra // cubeta_chiquita
+        leche_total = leche_de_medianas + (cuantas_chiquitas * cubeta_chiquita)
+        
+        print(f"• Usar {cuantas_medianas} medianas + {cuantas_chiquitas} chiquitas:")
+        print(f"  {cuantas_medianas} × {cubeta_mediana} + {cuantas_chiquitas} × {cubeta_chiquita} = {leche_total}")
+        
+        if leche_total > mejor_opcion[2]:
+            mejor_opcion = (cuantas_medianas, cuantas_chiquitas, leche_total)
+            print(f"  ← ¡Esta es la mejor hasta ahora!")
+        
+        print()
+        cuantas_medianas += 1
+    
+    print(f"Respuesta final: {mejor_opcion[0]} medianas + {mejor_opcion[1]} chiquitas = {mejor_opcion[2]} unidades")
+    print(f"(Solo faltaron {cubeta_grande - mejor_opcion[2]} unidades para llenar completamente)")
+
+# Probar con el ejemplo del problema
+def probar_con_ejemplo():
+    import io
+    import sys
+    
+    ejemplo_input = "17 25 77"
+    
+    # Cambiar donde lee el programa
+    entrada_vieja = sys.stdin
+    sys.stdin = io.StringIO(ejemplo_input)
+    
+    print("Probando con el ejemplo del problema:")
+    print("Entrada: 17 25 77")
+    print("Resultado:", end=" ")
+    resolver_cubetas()
+    
+    # Volver a como estaba
+    sys.stdin = entrada_vieja
+
+# Ejecutar todo
+probar_con_ejemplo()
+explicar_como_funciona()
